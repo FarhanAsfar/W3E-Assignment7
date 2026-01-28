@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-import datetime, timezone
+from datetime import datetime, timezone
 
 class Expense(BaseModel):
     id: str
@@ -8,6 +8,6 @@ class Expense(BaseModel):
     amount: float
     currency: str = "BDT"
     note: str
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=datetime.now)
          
 
