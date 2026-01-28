@@ -6,7 +6,7 @@ class Expense(BaseModel):
     date: str
     category: str
     amount: float
-    currency: str
+    currency: str = "BDT"
     note: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
          
