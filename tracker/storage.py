@@ -35,4 +35,17 @@ def create_expense(expense_data):
         print(f"Couldn't write to the file {e}")
     
    
+def list_expenses():
+    file_path = "./data/expenses.json"
 
+    if not os.path.exists(file_path):
+        print("No data found")
+        return
+    
+    with open (file_path, 'r') as json_file:
+        data = json.load(json_file)
+
+    expenses = data[1:]
+
+    for exp in expenses:
+        print(f"[{exp['date']}] {exp['category']}: {exp['amount']} {exp['currency']} - {exp['note']}")
