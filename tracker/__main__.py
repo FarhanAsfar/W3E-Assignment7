@@ -1,2 +1,4 @@
+from .cli import parse_argument
 
-print("helloooo")
+if __name__ == "__main__":
+    parse_argument()
