@@ -9,7 +9,7 @@ def parse_argument():
     list_parser = subparser.add_parser("list")
 
 
-    add_parser.add_argument("--id", required=True)
+    # add_parser.add_argument("--id", required=True)
     add_parser.add_argument("--date", required=True)
     add_parser.add_argument("--category", required=True)
     add_parser.add_argument("--amount", type=float, required=True)
@@ -20,7 +20,7 @@ def parse_argument():
 
     if args.command == "add":
         new_expense = {
-            "id": args.id,
+            # "id": args.id,
             "date": args.date,
             "category": args.category,
             "amount": args.amount,
