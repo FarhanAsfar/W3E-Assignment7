@@ -2,19 +2,21 @@ from .models import Expense
 import os
 import json
 
-def print_expense():
+def create_expense(expense_data):
     file_path = "./data/expenses.json"
 
     # making sure if path exists
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
     
-    expense1 = Expense (
-        id = "001",
-        date = "2026-01-28",
-        category = "food",
-        amount = 333.33,
-        note = "lunch"
-    )
+    # expense1 = Expense (
+    #     id = "001",
+    #     date = "2026-01-28",
+    #     category = "food",
+    #     amount = 333.33,
+    #     note = "lunch"
+    # )
+
+    expense_dataa = Expense(**expense_data)
 
     try:
         if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
@@ -23,7 +25,7 @@ def print_expense():
         else:
             data = [{"version": "1"},]
         
-        data.append(expense1.to_dict())
+        data.append(expense_dataa.model_dump(mode='json'))
 
         with open (file_path, 'w') as json_file:
             json.dump(data, json_file, indent=4)
