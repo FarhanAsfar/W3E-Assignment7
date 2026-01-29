@@ -21,7 +21,7 @@ def generate_expense_id(existing_expenses):
     except Exception:
         last_serial = 0
 
-    return f"EXP-{date}-{last_serial+1: 04d}"
+    return f"EXP-{date}-{last_serial+1:04d}"
 
 
 
