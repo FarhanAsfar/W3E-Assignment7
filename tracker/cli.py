@@ -11,10 +11,10 @@ def parse_argument():
 
 
     # add_parser.add_argument("--id", required=True)
-    add_parser.add_argument("--date", type=valid_date,)
-    add_parser.add_argument("--category", required=True)
-    add_parser.add_argument("--amount", type=float, required=True)
-    add_parser.add_argument("--currency", default="BDT")
+    add_parser.add_argument("--date", type=valid_date, help="YYYY-MM-DD")
+    add_parser.add_argument("--category", required=True, help="e.g:food, transport, rent (lowercase)")
+    add_parser.add_argument("--amount", type=float, required=True, help="Value must be greater than 0")
+    add_parser.add_argument("--currency", default="BDT", help="e.g:'BDT', 'USD', 'INR'")
     add_parser.add_argument("--note", default="")
 
     args = parser.parse_args()
