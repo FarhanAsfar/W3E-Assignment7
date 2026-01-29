@@ -3,17 +3,23 @@ from .service import add_expense,list_expense,summary
 from .utils import valid_date
 from pydantic import ValidationError
 
-def common_filter_arguments():
-    p =  argparse.ArgumentParser
-
+def common_filter_arguments(p: argparse.ArgumentParser):
     p.add_argument("--month", help="Filter by month: YYYY-MM")
     p.add_argument("--from-month", dest="from_month", help="Start month: YYYY-MM")
     p.add_argument("--to-month", dest="to_month", help="End month: YYYY-MM")
     p.add_argument("--category", help="Filter by category ")
 
+
+def add_list_only_arguments(p: argparse.ArgumentParser):
+    p.add_argument("--min", dest="min_amount", type=float, help="Minimum amount")
+    p.add_argument("--max", dest="max_amount", type=float, help="Maximum amount")
+    p.add_argument("--sort-by", choices=["date", "amount", "category"], default="date")
+    p.add_argument("--desc", action="store_true", help="Sort descending")
+
+
 def parse_argument():
     parser = argparse.ArgumentParser(description="Expense Tracker CLI")
-    subparser = parser.add_subparsers(dest="command")
+    subparser = parser.add_subparsers(dest="command", required=True)
 
     # ---- add ---
     add_parser = subparser.add_parser("add")
@@ -27,6 +33,7 @@ def parse_argument():
     # ----List-----
     list_parser = subparser.add_parser("list")
     common_filter_arguments(list_parser)
+    add_list_only_arguments(list_parser)
 
     # ---summary---
     summary_parser = subparser.add_parser("summary")
@@ -34,10 +41,18 @@ def parse_argument():
 
     args = parser.parse_args()
 
+    def validate_filters():
+        if args.month and (args.from_month or args.to_month):
+            parser.error("use either --month OR --from-month/--to-month, not both")
+        if (args.from_month and not args.to_month) or (args.to_month and not args.from_month):
+            parser.error("use both --from-month and --to-month together")
+
+    if args.command in ("list", "summary"):
+        validate_filters()
+
     if args.command == "add":
         new_expense = {
-            # "id": args.id,
-            # "date": args.date,
+            "date": args.date,
             "category": args.category,
             "amount": args.amount,
             "currency": args.currency,
@@ -52,9 +67,7 @@ def parse_argument():
                 print(f"error: {field}: {err['msg']}")
             return
 
-    elif args.command == "list":
-        from .service import list_expense
-        
+    elif args.command == "list":        
         try:
             expenses = list_expense(
                 month=args.month,
@@ -70,6 +83,9 @@ def parse_argument():
             for err in e.errors():
                 field = ".".join(str(x) for x in err["loc"])
                 print(f"error: {field}: {err['msg']}")
+            return
+        except ValueError as e:              
+            print(f"error: {e}")
             return
         
 
