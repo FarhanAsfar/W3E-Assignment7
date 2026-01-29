@@ -5,11 +5,11 @@ from pydantic import ValidationError
 
 def common_filter_arguments():
     p =  argparse.ArgumentParser
-    
+
     p.add_argument("--month", help="Filter by month: YYYY-MM")
     p.add_argument("--from-month", dest="from_month", help="Start month: YYYY-MM")
     p.add_argument("--to-month", dest="to_month", help="End month: YYYY-MM")
-    p.add_argument("--category", help="Filter by category (case-insensitive)")
+    p.add_argument("--category", help="Filter by category ")
 
 def parse_argument():
     parser = argparse.ArgumentParser(description="Expense Tracker CLI")
