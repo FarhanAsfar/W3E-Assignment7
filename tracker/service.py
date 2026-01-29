@@ -23,5 +23,21 @@ def generate_expense_id(existing_expenses):
 
     return f"EXP-{date}-{last_serial+1: 04d}"
 
-def add_expense():
-    exist_dir()
+
+
+def add_expense(expense_data):
+    data = load_data()
+    expenses = data.get("expenses", [])
+
+    new_expense_id = generate_expense_id(expenses)
+
+    expense_data = {**expense_data, "id": new_expense_id}
+
+    expense = Expense(**expense_data)
+
+    expenses.append(expense.model_dump(mode='json'))
+    data["expenses"] = expenses
+
+    save_data(data)
+
+    return expense
