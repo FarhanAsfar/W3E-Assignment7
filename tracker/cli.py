@@ -1,5 +1,5 @@
 import argparse
-from .storage import create_expense
+from .service import add_expense
 from .utils import valid_date
 
 def parse_argument():
@@ -28,10 +28,19 @@ def parse_argument():
             "currency": args.currency,
             "note": args.note,
         }
-        create_expense(new_expense)
+        add_expense(new_expense)
+
     elif args.command == "list":
-        from .storage import list_expenses
-        list_expenses()
+        from .service import list_expense
+        expenses = list_expense()
+
+        if not expenses:
+            print("No expenses found")
+            return
+        
+        print(f"{'ID':<22} {'Date':<12} {'Category':<10} {'Amount':<10} {'Currency':<10} {'Note'}")
+        for e in expenses:
+            print(f"{f'[{e.id}]':<22} {e.date:<12} {e.category:<10} {e.amount:<10} {e.currency:<10} {e.note}")
     
 
 if __name__ == "__main__":
