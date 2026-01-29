@@ -1,6 +1,7 @@
 import argparse
 from .service import add_expense
 from .utils import valid_date
+from pydantic import ValidationError
 
 def parse_argument():
     parser = argparse.ArgumentParser(description="Expense Tracker CLI")
@@ -28,7 +29,14 @@ def parse_argument():
             "currency": args.currency,
             "note": args.note,
         }
-        add_expense(new_expense)
+        try:
+            exp = add_expense(new_expense)
+            print(f"Added: {exp.id}")
+        except ValidationError as e:
+            for err in e.errors():
+                field = ".".join(str(x) for x in err["loc"])
+                print(f"error: {field}: {err['msg']}")
+            return
 
     elif args.command == "list":
         from .service import list_expense
