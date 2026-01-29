@@ -15,15 +15,22 @@ def parse_argument():
     parser = argparse.ArgumentParser(description="Expense Tracker CLI")
     subparser = parser.add_subparsers(dest="command")
 
+    # ---- add ---
     add_parser = subparser.add_parser("add")
-    list_parser = subparser.add_parser("list")
-
-
+    
     add_parser.add_argument("--date", type=valid_date, help="YYYY-MM-DD")
     add_parser.add_argument("--category", required=True, help="e.g:food, transport, rent (lowercase)")
     add_parser.add_argument("--amount", type=float, required=True, help="Value must be greater than 0")
     add_parser.add_argument("--currency", default="BDT", help="e.g:'BDT', 'USD', 'INR'")
     add_parser.add_argument("--note", default="")
+
+    # ----List-----
+    list_parser = subparser.add_parser("list")
+    common_filter_arguments(list_parser)
+
+    # ---summary---
+    summary_parser = subparser.add_parser("summary")
+    common_filter_arguments(summary_parser)
 
     args = parser.parse_args()
 
