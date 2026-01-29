@@ -64,6 +64,30 @@ def apply_common_filters(
 
     return expenses
 
+# specific filters for list
+def apply_list_only_filters(
+        expenses: [Expense],
+        min_amount: Optional[float] = None,
+        max_amount: Optional[float] = None,
+):
+    if min_amount is not None:
+        expenses = [e for e in expenses if e.amount >= min_amount]
+    if max_amount is not None:
+        expenses = [e for e in expenses if e.amount <= max_amount]
+    return expenses
+
+
+def sort_expenses(expenses: [Expense], sort_by: str = "date", descending: bool = False):
+    if sort_by == "date":
+        key_fn = lambda e: datetime.strptime(e.date, "%Y-%m-%d")
+    elif sort_by == "amount":
+        key_fn = lambda e: e.amount
+    elif sort_by == "category":
+        key_fn = lambda e: e.category.lower()
+    else:
+        raise ValueError("sort_by must be one of: date, amount, category")
+
+    return sorted(expenses, key=key_fn, reverse=descending)
 
 # --- argument command execution ----
 def add_expense(expense_data):
@@ -116,6 +140,14 @@ def list_expense(
         category=category,
     )
 
+    expenses = apply_list_only_filters(
+        expenses,
+        min_amount=min_amount,
+        max_amount=max_amount,
+    )
+    
+    expenses = sort_expenses(expenses, sort_by=sort_by, descending=descending)
+
     return expenses
 
 
@@ -151,3 +183,39 @@ def summary(
         "to_month": to_month,
         "category": category,
     }
+
+# ---delete_expense ---
+def delete_expense(expense_id: str):
+    data = load_data()
+    expenses = data.get("expenses", [])
+
+    original_len = len(expenses)
+    expenses = [e for e in expenses if e.get("id") != expense_id]
+
+    if len(expenses) == original_len:
+        return False 
+
+    data["expenses"] = expenses
+    save_data(data)
+    return True
+
+
+def edit_expense(expense_id: str, updates: dict):
+    data = load_data()
+    expenses = data.get("expenses", [])
+
+    for i, item in enumerate(expenses):
+        if item.get("id") == expense_id:
+            # merge updates
+            updated_item = {**item, **updates}
+
+            # validate via model
+            updated_model = Expense(**updated_item)
+
+            # save back as json-safe dict
+            expenses[i] = updated_model.model_dump(mode="json")
+            data["expenses"] = expenses
+            save_data(data)
+            return True
+
+    return False
