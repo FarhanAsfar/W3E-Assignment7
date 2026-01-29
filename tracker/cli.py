@@ -1,5 +1,5 @@
 import argparse
-from .service import add_expense
+from .service import add_expense,list_expense,summary
 from .utils import valid_date
 from pydantic import ValidationError
 
@@ -54,7 +54,24 @@ def parse_argument():
 
     elif args.command == "list":
         from .service import list_expense
-        expenses = list_expense()
+        
+        try:
+            expenses = list_expense(
+                month=args.month,
+                from_month=args.from_month,
+                to_month=args.to_month,
+                category=args.category,
+                min_amount=args.min_amount,
+                max_amount=args.max_amount,
+                sort_by=args.sort_by,
+                descending=args.desc,
+            )
+        except ValidationError as e:
+            for err in e.errors():
+                field = ".".join(str(x) for x in err["loc"])
+                print(f"error: {field}: {err['msg']}")
+            return
+        
 
         if not expenses:
             print("No expenses found")
@@ -64,6 +81,22 @@ def parse_argument():
         for e in expenses:
             print(f"{f'[{e.id}]':<22} {e.date:<12} {e.category:<10} {e.amount:<10} {e.currency:<10} {e.note}")
     
+    elif args.command == "summary":
+        result = summary(
+            month=args.month,
+            from_month=args.from_month,
+            to_month=args.to_month,
+            category=args.category,
+        )
+
+        print(f"Count: {result.get('count', 0)}")
+        print(f"Total: {result.get('total', 0.0)}")
+        by_category = result.get("by_category", {})
+        if by_category:
+            print("\nBy category:")
+            for k, v in by_category.items():
+                print(f"  {k}: {v}")
+
 
 if __name__ == "__main__":
     parse_argument()
