@@ -14,7 +14,7 @@ def parse_argument():
     add_parser.add_argument("--date", type=valid_date,)
     add_parser.add_argument("--category", required=True)
     add_parser.add_argument("--amount", type=float, required=True)
-    add_parser.add_argument("--currency", required=True)
+    add_parser.add_argument("--currency", default="BDT")
     add_parser.add_argument("--note", default="")
 
     args = parser.parse_args()
