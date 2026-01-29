@@ -31,9 +31,10 @@ def add_expense(expense_data):
 
     new_expense_id = generate_expense_id(expenses)
 
+    # taking all key-value pairs from expense_data and adding a new key "id" with 'new_expense_id' value.
     expense_data = {**expense_data, "id": new_expense_id}
 
-    expense = Expense(**expense_data)
+    expense = Expense(**expense_data) # equivalent to expense = Expense("id" = EXP..., "category"=""...)
 
     expenses.append(expense.model_dump(mode='json'))
     data["expenses"] = expenses
@@ -41,3 +42,12 @@ def add_expense(expense_data):
     save_data(data)
 
     return expense
+
+def list_expense():
+    data = load_data()
+    
+    all_data = data.get("expenses", [])
+
+    expenses = [Expense(**e) for e in all_data]
+
+    return expenses
