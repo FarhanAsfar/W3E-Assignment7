@@ -1,5 +1,6 @@
 import argparse
 from .storage import create_expense
+from .utils import valid_date
 
 def parse_argument():
     parser = argparse.ArgumentParser(description="Expense Tracker CLI")
@@ -10,7 +11,7 @@ def parse_argument():
 
 
     # add_parser.add_argument("--id", required=True)
-    add_parser.add_argument("--date", required=True)
+    add_parser.add_argument("--date", type=valid_date, required=True)
     add_parser.add_argument("--category", required=True)
     add_parser.add_argument("--amount", type=float, required=True)
     add_parser.add_argument("--currency", required=True)
