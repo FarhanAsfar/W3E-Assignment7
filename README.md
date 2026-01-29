@@ -68,16 +68,10 @@ Activate it:
 source .venv/bin/activate
 ```
 
-**Windows (PowerShell)**
-
-```powershell
-.venv\Scripts\Activate.ps1
-```
-
 ### 3. Install Dependencies
 
 ```bash
-pip install pydantic
+pip install -r requirements.txt
 ```
 
 ---
@@ -294,14 +288,3 @@ python -m tracker delete --id EXP-20260201-0003
 * Friendly error messages are shown instead of stack traces
 
 ---
-
-## Notes
-
-* This project intentionally avoids a database to focus on architecture
-* Designed for learning CLI design, validation, and clean layering
-
----
-
-## License
-
-This project is for educational purposes.
