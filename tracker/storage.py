@@ -56,7 +56,7 @@ def create_expense(expense_data):
 def list_expenses():
     file_path = "./data/expenses.json"
 
-    if not os.path.exists(file_path):
+    if not os.path.exists(file_path) or os.path.getsize(file_path) == 0:
         print("No data found")
         return
     
@@ -64,7 +64,11 @@ def list_expenses():
         data = json.load(json_file)
 
     # accessing expenses from the json file
-    expenses = data.get("expenses", []) if isinstance(data, dict) else data
+    expenses = data.get("expenses", [])
+
+    if not expenses:
+        print("No list of expenses found")
+        return
 
     for exp in expenses:
         print(f"[{exp['date']}] {exp['category']}: {exp['amount']} {exp['currency']} - {exp['note']}")
