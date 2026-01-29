@@ -18,6 +18,13 @@ class Expense(BaseModel):
             return v
         except ValueError:
             raise ValueError("Date must be in YYYY-MM-DD format")
+
+    @field_validator("amount")
+    def amount_cant_be_zero(cls, v):
+        if v <= 0:
+            raise ValueError("Amount must be more than 0")
+        return v
+
     # def to_dict(self):
     #     return {
     #         "id": self.id,
