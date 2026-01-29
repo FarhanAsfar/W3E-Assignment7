@@ -3,6 +3,12 @@ from .service import add_expense
 from .utils import valid_date
 from pydantic import ValidationError
 
+def common_filter_arguments(p):
+    p.add_argument("--month", help="Filter by month: YYYY-MM")
+    p.add_argument("--from-month", dest="from_month", help="Start month: YYYY-MM")
+    p.add_argument("--to-month", dest="to_month", help="End month: YYYY-MM")
+    p.add_argument("--category", help="Filter by category (case-insensitive)")
+
 def parse_argument():
     parser = argparse.ArgumentParser(description="Expense Tracker CLI")
     subparser = parser.add_subparsers(dest="command")
@@ -11,7 +17,6 @@ def parse_argument():
     list_parser = subparser.add_parser("list")
 
 
-    # add_parser.add_argument("--id", required=True)
     add_parser.add_argument("--date", type=valid_date, help="YYYY-MM-DD")
     add_parser.add_argument("--category", required=True, help="e.g:food, transport, rent (lowercase)")
     add_parser.add_argument("--amount", type=float, required=True, help="Value must be greater than 0")
