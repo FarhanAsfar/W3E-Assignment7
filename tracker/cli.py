@@ -39,6 +39,19 @@ def parse_argument():
     summary_parser = subparser.add_parser("summary")
     common_filter_arguments(summary_parser)
 
+    # ---delete ---
+    delete_parser = subparser.add_parser("delete")
+    delete_parser.add_argument("--id", required=True, help="Expense ID (e.g: EXP-YYYYMMDD-0001)")
+
+    # ---edit ---
+    edit_parser = subparser.add_parser("edit")
+    edit_parser.add_argument("--id", required=True, help="Expense ID (e.g: EXP-YYYYMMDD-0001)")
+    edit_parser.add_argument("--date", type=valid_date, help="YYYY-MM-DD")
+    edit_parser.add_argument("--category", help="e.g:food, transport, rent")
+    edit_parser.add_argument("--amount", type=float, help="Value must be greater than 0")
+    edit_parser.add_argument("--currency", help="e.g:'BDT', 'USD', 'INR'")
+    edit_parser.add_argument("--note", help="")
+
     args = parser.parse_args()
 
     def validate_filters():
