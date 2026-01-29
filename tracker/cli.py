@@ -1,5 +1,5 @@
 import argparse
-from .storage import create_expense
+from .service import add_expense
 from .utils import valid_date
 
 def parse_argument():
@@ -28,7 +28,7 @@ def parse_argument():
             "currency": args.currency,
             "note": args.note,
         }
-        create_expense(new_expense)
+        add_expense(new_expense)
     elif args.command == "list":
         from .storage import list_expenses
         list_expenses()
