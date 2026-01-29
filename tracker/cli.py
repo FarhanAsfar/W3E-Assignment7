@@ -39,6 +39,19 @@ def parse_argument():
     summary_parser = subparser.add_parser("summary")
     common_filter_arguments(summary_parser)
 
+    # ---delete ---
+    delete_parser = subparser.add_parser("delete")
+    delete_parser.add_argument("--id", required=True, help="Expense ID (e.g: EXP-YYYYMMDD-0001)")
+
+    # ---edit ---
+    edit_parser = subparser.add_parser("edit")
+    edit_parser.add_argument("--id", required=True, help="Expense ID (e.g: EXP-YYYYMMDD-0001)")
+    edit_parser.add_argument("--date", type=valid_date, help="YYYY-MM-DD")
+    edit_parser.add_argument("--category", help="e.g:food, transport, rent")
+    edit_parser.add_argument("--amount", type=float, help="Value must be greater than 0")
+    edit_parser.add_argument("--currency", help="e.g:'BDT', 'USD', 'INR'")
+    edit_parser.add_argument("--note", help="")
+
     args = parser.parse_args()
 
     def validate_filters():
@@ -113,6 +126,44 @@ def parse_argument():
             for k, v in by_category.items():
                 print(f"  {k}: {v}")
 
+    elif args.command == "delete":
+        from .service import delete_expense 
+        ok = delete_expense(args.id)
+        if ok:
+            print(f"Deleted: {args.id}")
+        else:
+            print(f"error: expense not found: {args.id}")
 
+    elif args.command == "edit":
+        from .service import edit_expense
+
+        updates = {}
+        if args.date is not None:
+            updates["date"] = args.date
+        if args.category is not None:
+            updates["category"] = args.category
+        if args.amount is not None:
+            updates["amount"] = args.amount
+        if args.currency is not None:
+            updates["currency"] = args.currency
+        if args.note is not None:
+            updates["note"] = args.note
+
+        if not updates:
+            print("error: nothing to update (provide at least one field)")
+            return
+
+        try:
+            updated = edit_expense(args.id, updates)
+            if updated:
+                print(f"Updated: {args.id}")
+            else:
+                print(f"error: expense not found: {args.id}")
+        except ValidationError as e:
+            for err in e.errors():
+                field = ".".join(str(x) for x in err["loc"])
+                print(f"error: {field}: {err['msg']}")
+            return
+        
 if __name__ == "__main__":
     parse_argument()
