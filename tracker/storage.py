@@ -29,4 +29,3 @@ def save_data(data):
     with open(file_path, "w") as json_file:
         json.dump(data, json_file, indent=4)
     
-    print (f"Data written to file: {file_path}")
