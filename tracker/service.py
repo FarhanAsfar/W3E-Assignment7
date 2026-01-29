@@ -1,6 +1,6 @@
 from .models import Expense
 from .storage import exist_dir, load_data, save_data
-from datetime import datetime
+from datetime import datetime, date
 
 def date_str():
     return datetime.now().strftime("%Y%m%d")
@@ -28,6 +28,9 @@ def generate_expense_id(existing_expenses):
 def add_expense(expense_data):
     data = load_data()
     expenses = data.get("expenses", [])
+
+    if not expense_data.get("date"):
+        expense_data["date"] = date.today().strftime("%Y-%m-%d")
 
     new_expense_id = generate_expense_id(expenses)
 
