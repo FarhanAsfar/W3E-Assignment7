@@ -105,8 +105,8 @@ def parse_argument():
             category=args.category,
         )
 
-        print(f"Count: {result.get('count', 0)}")
-        print(f"Total: {result.get('total', 0.0)}")
+        print(f"Total Expenses: {result.get('count', 0)}")
+        print(f"Grand Total: {result.get('total', 0.0)}")
         by_category = result.get("by_category", {})
         if by_category:
             print("\nBy category:")
