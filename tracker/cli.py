@@ -30,8 +30,8 @@ def parse_argument():
         }
         add_expense(new_expense)
     elif args.command == "list":
-        from .storage import list_expenses
-        list_expenses()
+        from .storage import list_expense
+        list_expense()
     
 
 if __name__ == "__main__":
