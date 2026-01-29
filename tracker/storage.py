@@ -63,7 +63,8 @@ def list_expenses():
     with open (file_path, 'r') as json_file:
         data = json.load(json_file)
 
-    expenses = data[1:]
+    # accessing expenses from the json file
+    expenses = data.get("expenses", []) if isinstance(data, dict) else data
 
     for exp in expenses:
         print(f"[{exp['date']}] {exp['category']}: {exp['amount']} {exp['currency']} - {exp['note']}")
