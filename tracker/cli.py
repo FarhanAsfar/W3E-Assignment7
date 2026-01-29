@@ -2,6 +2,7 @@ import argparse
 from .service import add_expense,list_expense,summary
 from .utils import valid_date
 from pydantic import ValidationError
+from .logger import logger
 
 def common_filter_arguments(p: argparse.ArgumentParser):
     p.add_argument("--month", help="Filter by month: YYYY-MM")
@@ -54,6 +55,8 @@ def parse_argument():
 
     args = parser.parse_args()
 
+    logger.info(f"Command started: {args.command}")
+
     def validate_filters():
         if args.month and (args.from_month or args.to_month):
             parser.error("use either --month OR --from-month/--to-month, not both")
@@ -74,6 +77,7 @@ def parse_argument():
         try:
             exp = add_expense(new_expense)
             print(f"Added: {exp.id}")
+            logger.info(f"ADD success | id={exp.id} amount={exp.amount} category={exp.category}")
         except ValidationError as e:
             for err in e.errors():
                 field = ".".join(str(x) for x in err["loc"])
@@ -92,6 +96,7 @@ def parse_argument():
                 sort_by=args.sort_by,
                 descending=args.desc,
             )
+            logger.info(f"LIST success | count={len(expenses)}")
         except ValidationError as e:
             for err in e.errors():
                 field = ".".join(str(x) for x in err["loc"])
@@ -117,6 +122,9 @@ def parse_argument():
             to_month=args.to_month,
             category=args.category,
         )
+        logger.info(
+            f"SUMMARY success | count={result.get('count')} total={result.get('total')}"
+        )
 
         print(f"Total Expenses: {result.get('count', 0)}")
         print(f"Grand Total: {result.get('total', 0.0)}")
@@ -131,8 +139,10 @@ def parse_argument():
         ok = delete_expense(args.id)
         if ok:
             print(f"Deleted: {args.id}")
+            logger.info(f"DELETE success | id={args.id}")
         else:
             print(f"error: expense not found: {args.id}")
+            logger.warning(f"DELETE failed | id not found={args.id}")
 
     elif args.command == "edit":
         from .service import edit_expense
@@ -157,8 +167,10 @@ def parse_argument():
             updated = edit_expense(args.id, updates)
             if updated:
                 print(f"Updated: {args.id}")
+                logger.info(f"EDIT success | id={args.id} fields={list(updates.keys())}")
             else:
                 print(f"error: expense not found: {args.id}")
+                logger.warning(f"EDIT failed | id not found={args.id}")
         except ValidationError as e:
             for err in e.errors():
                 field = ".".join(str(x) for x in err["loc"])
